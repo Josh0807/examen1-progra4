@@ -36,6 +36,7 @@ export default function CarParts() {
               name: article.articleProductName,
               brand: article.supplierName,
               code: article.articleNo,
+              image: article.s3image,
             }))
           );
           return;
@@ -65,7 +66,7 @@ export default function CarParts() {
   if (items.length === 0) return <p>No hay repuestos disponibles.</p>;
 
   return (
-    <section>
+    <section id="catalogo">
       <h1>Repuestos</h1>
 
       <input
@@ -88,6 +89,9 @@ export default function CarParts() {
         <div>
           {visibleItems.map((item) => (
             <article key={item.id}>
+              {item.image && (
+                <img className="part-image" src={item.image} alt={item.name} />
+              )}
               <h3>{item.name}</h3>
               <p>{item.brand}</p>
               <p>{item.code}</p>
