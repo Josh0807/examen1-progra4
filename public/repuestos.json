@@ -1,0 +1,18 @@
+{
+  "record": {
+    "items": [
+      { "id": 1, "name": "Pastillas de freno", "brand": "Brembo", "code": "BR-1001" },
+      { "id": 2, "name": "Filtro de aceite", "brand": "Bosch", "code": "BO-2045" },
+      { "id": 3, "name": "Bateria 12V", "brand": "ACDelco", "code": "AC-3302" },
+      { "id": 4, "name": "Amortiguador delantero", "brand": "Monroe", "code": "MO-7788" },
+      { "id": 5, "name": "Bujia de iridio", "brand": "NGK", "code": "NG-5560" },
+      { "id": 6, "name": "Radiador compacto", "brand": "Denso", "code": "DE-4140" },
+      { "id": 7, "name": "Filtro de aire", "brand": "Mann", "code": "MA-1204" },
+      { "id": 8, "name": "Kit de clutch", "brand": "LUK", "code": "LK-9102" },
+      { "id": 9, "name": "Sensor de oxigeno", "brand": "Delphi", "code": "DP-7003" },
+      { "id": 10, "name": "Correa de distribucion", "brand": "Gates", "code": "GT-3341" },
+      { "id": 11, "name": "Alternador", "brand": "Valeo", "code": "VA-8120" },
+      { "id": 12, "name": "Bomba de agua", "brand": "SKF", "code": "SK-2217" }
+    ]
+  }
+}
