@@ -3,33 +3,21 @@ import { useEffect, useState } from "react";
 export default function CarParts() {
   const [items, setItems] = useState([]);
   const [visibleCount, setVisibleCount] = useState(10);
+  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     async function fetchCarParts() {
       try {
-        const apiUrl = import.meta.env.VITE_API_URL;
-        const accessKey = import.meta.env.VITE_JSONBIN_ACCESS_KEY;
-
-        if (!apiUrl || apiUrl.includes("PEGAR_AQUI")) {
-          throw new Error("Configura VITE_API_URL en el archivo .env");
-        }
-
-        const response = await fetch(apiUrl, {
+        const response = await fetch(import.meta.env.VITE_API_URL, {
           headers: {
-            "X-Access-Key": accessKey,
+            "X-Access-Key": import.meta.env.VITE_JSONBIN_ACCESS_KEY,
           },
         });
 
         if (!response.ok) {
           throw new Error("No se pudieron cargar los repuestos");
-        }
-
-        const contentType = response.headers.get("content-type") || "";
-
-        if (!contentType.includes("application/json")) {
-          throw new Error("La respuesta del API no es JSON");
         }
 
         const data = await response.json();
@@ -42,19 +30,18 @@ export default function CarParts() {
         }
 
         if (Array.isArray(apiArticles)) {
-          const normalizedItems = apiArticles.map((article) => ({
-            id: article.articleId,
-            name: article.articleProductName,
-            brand: article.supplierName,
-            code: article.articleNo,
-            image: article.s3image,
-          }));
-
-          setItems(normalizedItems);
+          setItems(
+            apiArticles.map((article) => ({
+              id: article.articleId,
+              name: article.articleProductName,
+              brand: article.supplierName,
+              code: article.articleNo,
+            }))
+          );
           return;
         }
 
-        throw new Error("El API no devolvio una lista de repuestos valida");
+        throw new Error("El API no devolvio una lista valida de repuestos");
       } catch (err) {
         setError(err.message || "Ocurrio un error al cargar los repuestos");
       } finally {
@@ -65,33 +52,51 @@ export default function CarParts() {
     fetchCarParts();
   }, []);
 
+  const filteredItems = items.filter((item) =>
+    item.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const visibleItems = filteredItems.slice(0, visibleCount);
+
   if (loading) return <p>Cargando repuestos...</p>;
 
   if (error) return <p>Error: {error}</p>;
 
   if (items.length === 0) return <p>No hay repuestos disponibles.</p>;
 
-  const visibleItems = items.slice(0, visibleCount);
-
   return (
     <section>
       <h1>Repuestos</h1>
+
+      <input
+        type="text"
+        placeholder="Buscar repuesto..."
+        value={search}
+        onChange={(e) => {
+          setSearch(e.target.value);
+          setVisibleCount(10);
+        }}
+      />
+
       <p>
-        Mostrando {visibleItems.length} de {items.length} repuestos
+        Mostrando {visibleItems.length} de {filteredItems.length} repuestos
       </p>
 
-      <div>
-        {visibleItems.map((item) => (
-          <article key={item.id}>
-            <h3>{item.name}</h3>
-            <p>{item.brand}</p>
-            <p>{item.code}</p>
-            {item.image && <img src={item.image} alt={item.name} width="120" />}
-          </article>
-        ))}
-      </div>
+      {filteredItems.length === 0 ? (
+        <p>No hay repuestos que coincidan con la busqueda.</p>
+      ) : (
+        <div>
+          {visibleItems.map((item) => (
+            <article key={item.id}>
+              <h3>{item.name}</h3>
+              <p>{item.brand}</p>
+              <p>{item.code}</p>
+            </article>
+          ))}
+        </div>
+      )}
 
-      {visibleCount < items.length && (
+      {visibleCount < filteredItems.length && (
         <button onClick={() => setVisibleCount((count) => count + 10)}>
           Ver mas
         </button>
